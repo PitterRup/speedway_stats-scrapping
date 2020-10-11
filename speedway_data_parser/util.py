@@ -3,6 +3,7 @@ from functools import wraps
 
 log = logging.getLogger(__name__)
 
+
 def catch_exceptions(lst_exceptions):
     if not isinstance(lst_exceptions, tuple):
         _lst_exceptions = (lst_exceptions,)

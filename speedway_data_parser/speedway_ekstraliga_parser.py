@@ -32,28 +32,16 @@ class MatchParser:
         return elem.text_content().strip().replace("Komisarz toru\n", "")
 
     def get_first_team_name(self):
-        return self.tree.find_class("match__header__points__col__header")[
-            0
-        ].text.strip()
+        return self.tree.find_class("match__header__points__col__header")[0].text.strip()
 
     def get_first_team_score(self):
-        return int(
-            self.tree.find_class("match__header__points__col__header__score")[
-                0
-            ].text.strip()
-        )
+        return int(self.tree.find_class("match__header__points__col__header__score")[0].text.strip())
 
     def get_second_team_name(self):
-        return self.tree.find_class("match__header__points__col__header")[
-            1
-        ].text.strip()
+        return self.tree.find_class("match__header__points__col__header")[1].text.strip()
 
     def get_second_team_score(self):
-        return int(
-            self.tree.find_class("match__header__points__col__header__score")[
-                1
-            ].text.strip()
-        )
+        return int(self.tree.find_class("match__header__points__col__header__score")[1].text.strip())
 
     def get_first_team_composition(self):
         table = self.tree.find_class("match__header__points__col")[0].xpath("table")[0]
@@ -68,12 +56,8 @@ class MatchParser:
         for row in elem_table.xpath("tr"):
             ret.append(
                 TeamCompositionRider(
-                    number=int(
-                        row.find_class("match__header__points__no")[0].text.strip()
-                    ),
-                    name=row.find_class("match__header__points__rider")[0]
-                    .text_content()
-                    .strip(),
+                    number=int(row.find_class("match__header__points__no")[0].text.strip()),
+                    name=row.find_class("match__header__points__rider")[0].text_content().strip(),
                 )
             )
         return ret
@@ -129,6 +113,5 @@ class MatchParser:
 
     def validate(self):
         """Metoda waliduje zgodność odczytanych wyników poszczególnych biegów z odczytanym wynikiem meczu.
-        Todo
         """
         pass

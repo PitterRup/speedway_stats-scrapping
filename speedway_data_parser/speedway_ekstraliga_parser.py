@@ -129,5 +129,6 @@ class MatchParser:
 
     def validate(self):
         """Metoda waliduje zgodność odczytanych wyników poszczególnych biegów z odczytanym wynikiem meczu.
+        Todo
         """
         pass

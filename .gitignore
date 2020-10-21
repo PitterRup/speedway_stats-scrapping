@@ -3,3 +3,5 @@
 *.swo
 *.swn
 .pytest_cache
+.tox
+*.egg-info

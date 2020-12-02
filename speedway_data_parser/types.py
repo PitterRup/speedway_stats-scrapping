@@ -9,3 +9,11 @@ Heat = namedtuple("Heat", ["number", "winner_time", "rider_a", "rider_b", "rider
 HeatRider = namedtuple(
     "HeatRider", ["name", "replaced_rider_name", "score", "helmet_color", "warning", "defect", "fall", "exclusion"]
 )
+
+InterpretedHeatRider = namedtuple(
+    "InterpretedHeatRider",
+    list(HeatRider._fields) + [
+        'number',
+        'team',
+    ]
+)

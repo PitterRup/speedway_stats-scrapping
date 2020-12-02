@@ -1,3 +1,5 @@
+from speedway_data_parser.types import Heat, InterpretedHeatRider
+
 
 class ParsedTeamMatchInterpreter:
     def __init__(self, parsed_data):
@@ -28,11 +30,11 @@ class ParsedTeamMatchInterpreter:
                 dct_rider_b['number'], dct_rider_b['team'] = self.identify_rider(dct_rider_b['name'])
                 dct_rider_c['number'], dct_rider_c['team'] = self.identify_rider(dct_rider_c['name'])
                 dct_rider_d['number'], dct_rider_d['team'] = self.identify_rider(dct_rider_d['name'])
-                dct_heat['rider_a'] = dct_rider_a
-                dct_heat['rider_b'] = dct_rider_b
-                dct_heat['rider_c'] = dct_rider_c
-                dct_heat['rider_d'] = dct_rider_d
-                ret.append(dct_heat)
+                dct_heat['rider_a'] = InterpretedHeatRider._make(dct_rider_a.values())
+                dct_heat['rider_b'] = InterpretedHeatRider._make(dct_rider_b.values())
+                dct_heat['rider_c'] = InterpretedHeatRider._make(dct_rider_c.values())
+                dct_heat['rider_d'] = InterpretedHeatRider._make(dct_rider_d.values())
+                ret.append(Heat._make(dct_heat.values()))
             return ret
         else:
             return getattr(self.parsed_data, item)

@@ -3,11 +3,12 @@ from datetime import datetime
 
 from lxml import html
 
-from speedway_data_parser.string_tools import strip
+from speedway_data_parser.global_consts import DctHelmetColor
+from speedway_data_parser.string_tools import int_or_none, strip
 from speedway_data_parser.types import Heat, HeatRider, TeamCompositionRider
 
 
-class MatchParser:
+class TeamMatchParser:
     def __init__(self, html_string):
         self.tree = html.fromstring(html_string)
 
@@ -101,17 +102,31 @@ class MatchParser:
             else:
                 name = lst_name[0].text.strip()
                 replaced_name = None
+            score_str = strip(rider.getchildren()[3].text)
+            if score_str not in ("D", "U", "W", "M", "-", "0", "1", "2", "3", None):
+                raise Exception("Nieznana wartość w polu wynik: {}".format(score_str))
             ret.append(
                 HeatRider(
                     warning=strip(rider.getchildren()[1].text_content()) == "!",
                     name=name,
                     replaced_rider_name=replaced_name,
-                    score=strip(rider.getchildren()[3].text),
+                    score=int_or_none(score_str),
+                    defect=score_str == "D",
+                    fall=score_str == "U",
+                    exclusion=score_str in ("W", "M", "-"),
+                    helmet_color=self._get_helmet_color(rider.getchildren()[0].get("class")),
                 )
             )
         return ret
 
-    def validate(self):
-        """Metoda waliduje zgodność odczytanych wyników poszczególnych biegów z odczytanym wynikiem meczu.
-        """
-        pass
+    def _get_helmet_color(self, str_classes):
+        if "yellow" in str_classes:
+            return DctHelmetColor.YELLOW
+        elif "red" in str_classes:
+            return DctHelmetColor.RED
+        elif "blue" in str_classes:
+            return DctHelmetColor.BLUE
+        elif "white" in str_classes:
+            return DctHelmetColor.WHITE
+        else:
+            raise Exception("Nie znaleziono koloru kasku w: {}".format(str_classes))

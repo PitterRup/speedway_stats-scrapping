@@ -32,7 +32,7 @@ class ParsedTeamMatchInterpreter:
                 ret.append(InterpretedHeat._make(dct_heat.values()))
             return ret
         else:
-            return getattr(self.parsed_data, item)
+            return getattr(self.parsed_data, item)()
 
     def identify_riders(self, heat):
         dct_rider_a = heat.rider_a._asdict()

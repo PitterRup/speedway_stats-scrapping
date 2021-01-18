@@ -9,7 +9,7 @@ from speedway_data_parser.types import Heat, HeatRider, TeamCompositionRider
 
 
 class TeamMatchParser:
-    def __init__(self, html_string):
+    def parse(self, html_string):
         self.tree = html.fromstring(html_string)
 
     def get_stadium(self):

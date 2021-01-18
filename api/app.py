@@ -1,8 +1,11 @@
 import logging
 import logging.config
 
-from flask import Flask
+import simplejson
+from flask import Flask, make_response
 from flask_restful import Api
+
+from api.util.json_util import json_encoder
 
 
 class ParserApp(Flask):
@@ -19,6 +22,13 @@ class ParserApp(Flask):
     def add_flask_restful(self):
         self.logger.info('Initializing flask_restul')
         api = Api(self)
+
+        @api.representation('application/json')
+        def output_json(data, code, headers=None):
+            resp = make_response(simplejson.dumps(data, default=json_encoder), code)
+            resp.headers.extend(headers or {})
+            return resp
+
         return api
 
     def add_marshmallow(self):

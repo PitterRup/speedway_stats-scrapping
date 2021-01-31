@@ -12,7 +12,9 @@ from speedway_data_parser.types import Heat, HeatRider, TeamCompositionRider
 def test_html_match():
     with open("tests/dane_testowe/speedway_ekstraliga_match.html", "r") as f:
         html = f.read()
-    return TeamMatchParser(html)
+    tmp = TeamMatchParser()
+    tmp.parse(html)
+    return tmp
 
 
 class TestMatchParser:

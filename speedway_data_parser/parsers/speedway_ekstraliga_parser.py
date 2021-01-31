@@ -4,7 +4,7 @@ from datetime import datetime
 from lxml import html
 
 from speedway_data_parser.global_consts import DctHelmetColor
-from speedway_data_parser.string_tools import int_or_none, strip
+from speedway_data_parser.string_tools import int_or_none, strip, upper
 from speedway_data_parser.types import Heat, HeatRider, TeamCompositionRider
 
 
@@ -102,7 +102,7 @@ class TeamMatchParser:
             else:
                 name = lst_name[0].text.strip()
                 replaced_name = None
-            score_str = strip(rider.getchildren()[3].text)
+            score_str = upper(strip(rider.getchildren()[3].text))
             if score_str not in ("D", "U", "W", "M", "-", "0", "1", "2", "3", None):
                 raise Exception("Nieznana wartość w polu wynik: {}".format(score_str))
             ret.append(

@@ -55,10 +55,13 @@ class TeamMatchParser:
     def _get_team_composition(self, elem_table):
         ret = []
         for row in elem_table.xpath("tr"):
+            name = row.find_class("match__header__points__rider")[0].text_content().strip()
+            if not name:
+                continue
             ret.append(
                 TeamCompositionRider(
                     number=int(row.find_class("match__header__points__no")[0].text.strip()),
-                    name=row.find_class("match__header__points__rider")[0].text_content().strip(),
+                    name=name,
                 )
             )
         return ret
@@ -103,7 +106,7 @@ class TeamMatchParser:
                 name = lst_name[0].text.strip()
                 replaced_name = None
             score_str = upper(strip(rider.getchildren()[3].text))
-            if score_str not in ("D", "U", "W", "M", "-", "0", "1", "2", "3", None):
+            if score_str not in ("D", "U", "W", "M", "T", "-", "0", "1", "2", "3", None):
                 raise Exception("Nieznana wartość w polu wynik: {}".format(score_str))
             ret.append(
                 HeatRider(

@@ -159,6 +159,8 @@ class TeamParser():
                     rider.find_class('page-team__rider__birthdate')[0].text.strip(),
                     "%d.%m.%Y"
                 ),
-                country=rider.find_class('page-team__rider__country')[0].text.strip(),
+                country=rider.find_class('page-team__rider__country')[
+                    0
+                ].text_content().strip().replace('Narodowość', ''),
             ))
         return riders

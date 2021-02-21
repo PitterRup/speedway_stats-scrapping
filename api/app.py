@@ -38,8 +38,9 @@ class ParserApp(Flask):
 
     def init_resources(self, api):
         self.logger.info(u'Initializing resources')
-        from api.resources import ParseTeamMatch
+        from api.resources import ParseTeam, ParseTeamMatch
         api.add_resource(ParseTeamMatch, '/parser/team_match_parsing')
+        api.add_resource(ParseTeam, '/parser/team_parsing')
 
 
 def create_app(*args, **kwargs):

@@ -5,7 +5,8 @@ from lxml import html
 
 from speedway_data_parser.global_consts import DctHelmetColor
 from speedway_data_parser.string_tools import int_or_none, strip, upper
-from speedway_data_parser.types import Heat, HeatRider, TeamCompositionRider
+from speedway_data_parser.types import (Heat, HeatRider, TeamCompositionRider,
+                                        TeamRider)
 
 
 class TeamMatchParser:
@@ -133,3 +134,31 @@ class TeamMatchParser:
             return DctHelmetColor.WHITE
         else:
             raise Exception("Nie znaleziono koloru kasku w: {}".format(str_classes))
+
+
+class TeamParser():
+    def __init__(self, year):
+        self.year = year
+
+    def parse(self, html_string):
+        self.tree = html.fromstring(html_string)
+
+    def get_year(self):
+        return self.year
+
+    def get_team_name(self):
+        return self.tree.find_class('page-team__top__left__title')[0].text.strip()
+
+    def get_team_members(self):
+        riders = []
+        for rider in self.tree.find_class('page-team__riders')[0].getchildren():
+            riders.append(TeamRider(
+                firstname=rider.find_class('page-team__rider__name')[0].text.strip(),
+                surname=rider.find_class('page-team__rider__surname')[0].text.strip(),
+                birthdate=datetime.strptime(
+                    rider.find_class('page-team__rider__birthdate')[0].text.strip(),
+                    "%d.%m.%Y"
+                ),
+                country=rider.find_class('page-team__rider__country')[0].text.strip(),
+            ))
+        return riders

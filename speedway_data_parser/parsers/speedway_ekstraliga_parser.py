@@ -158,9 +158,9 @@ class TeamParser():
                 birthdate=datetime.strptime(
                     rider.find_class('page-team__rider__birthdate')[0].text.strip(),
                     "%d.%m.%Y"
-                ),
+                ).date(),
                 country=rider.find_class('page-team__rider__country')[
                     0
-                ].text_content().strip().replace('Narodowość', ''),
+                ].text_content().strip().replace('Narodowość: ', ''),
             ))
         return riders

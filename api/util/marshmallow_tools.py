@@ -14,7 +14,7 @@ def validate_ma(cls_schema):
         def wrapper(*args, **kwargs):
             schema = cls_schema()
             log.info(u'Validating request para by schema={}'.format(schema))
-            para = request.values
+            para = request.values or request.json
             try:
                 result = schema.load(para)
                 g.req_para = result

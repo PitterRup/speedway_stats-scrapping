@@ -30,8 +30,10 @@ class TeamMatchParser:
         return elem.text_content().strip().replace("Sędzia\n", "").strip()
 
     def get_track_commissioner(self):
-        elem = self.tree.find_class("match-info-box__members")[0].getchildren()[1]
-        return elem.text_content().strip().replace("Komisarz toru\n", "").strip()
+        elems = self.tree.find_class("match-info-box__members")[0].getchildren()
+        if len(elems) > 1:
+            return elems[1].text_content().strip().replace("Komisarz toru\n", "").strip()
+        return None
 
     def get_first_team_name(self):
         return self.tree.find_class("match-score-box__header__inner")[0].text.strip()
@@ -108,6 +110,8 @@ class TeamMatchParser:
                 replaced_name = lst_name[0].text.strip()
             else:
                 name = lst_name[0].text.strip()
+                if name == '-':
+                    name = None
                 replaced_name = None
             score_str = upper(strip(rider.getchildren()[3].text))
             if score_str not in ("D", "U", "u", "W", "M", "T", "-", "0", "1", "2", "3", None, '', '4', '6'):

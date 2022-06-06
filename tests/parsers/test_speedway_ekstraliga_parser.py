@@ -12,7 +12,10 @@ def pytest_generate_tests(metafunc):
     if "test_html_match" in metafunc.fixturenames:
         metafunc.parametrize(
             "test_html_match",
-            ["speedway_ekstraliga_match_new.html", "speedway_ekstraliga_match_stopped.html"],
+            [
+                "speedway_ekstraliga_match_new.html",
+                "speedway_ekstraliga_match_stopped.html"
+            ],
             indirect=True
         )
 
@@ -20,6 +23,15 @@ def pytest_generate_tests(metafunc):
 @pytest.fixture(scope="module")
 def test_html_match(request):
     with open("tests/dane_testowe/{}".format(request.param), "r") as f:
+        html = f.read()
+    tmp = TeamMatchParser()
+    tmp.parse(html)
+    return tmp
+
+
+@pytest.fixture(scope="module")
+def test_html_match_with_lacks():
+    with open("tests/dane_testowe/speedway_ekstraliga_match_with_lacks.html", "r") as f:
         html = f.read()
     tmp = TeamMatchParser()
     tmp.parse(html)
@@ -104,3 +116,15 @@ class TestMatchParser:
     )
     def test__get_heat_winner_time(self, test_html_match, header, exp_winner_time):
         assert test_html_match._get_heat_winner_timer(header) == exp_winner_time
+
+
+def test_get_heats_with_lacks(test_html_match_with_lacks):
+    heats = test_html_match_with_lacks.get_heats()
+    assert isinstance(heats, list)
+    assert len(heats) == 16
+    for heat in heats:
+        assert isinstance(heat, Heat)
+        assert isinstance(heat.rider_a, HeatRider)
+        assert isinstance(heat.rider_b, HeatRider)
+        assert isinstance(heat.rider_c, HeatRider)
+        assert isinstance(heat.rider_d, HeatRider)

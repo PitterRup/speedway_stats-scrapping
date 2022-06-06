@@ -28,7 +28,13 @@ class ParsedTeamMatchInterpreter:
                     dct_heat['rider_c'],
                     dct_heat['rider_d'],
                 ) = self.identify_riders(heat)
-                ret.append(InterpretedHeat._make(dct_heat.values()))
+                if (
+                    dct_heat['rider_a'].number is not None or
+                    dct_heat['rider_b'].number is not None or
+                    dct_heat['rider_c'].number is not None or
+                    dct_heat['rider_d'].number is not None
+                ):
+                    ret.append(InterpretedHeat._make(dct_heat.values()))
             return ret
         else:
             return getattr(self.parsed_data, item)()
@@ -50,6 +56,8 @@ class ParsedTeamMatchInterpreter:
         )
 
     def identify_rider(self, rider_name):
+        if rider_name is None:
+            return None, None
         number = self.dct_first_team_composition.get(rider_name)
         if number:
             return number, 'first'

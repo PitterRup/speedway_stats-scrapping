@@ -6,3 +6,5 @@
 .tox
 *.egg-info
 localconfig.py
+links_errors
+match_links

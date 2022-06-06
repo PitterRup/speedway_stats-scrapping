@@ -5,16 +5,14 @@ TeamCompositionRider = namedtuple("TeamCompositionRider", ["number", "name"])
 
 Heat = namedtuple(
     "Heat", [
-        "number", "winner_time", "rider_a", "rider_b", "rider_c", "rider_d"
+        "number", "winner_time", "rider_a", "rider_b", "rider_c", "rider_d", "finished"
     ]
 )
 
 
 InterpretedHeat = namedtuple(
     "InterpretedHeat",
-    list(Heat._fields) + [
-        'finished',
-    ]
+    list(Heat._fields)
 )
 
 

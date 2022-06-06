@@ -22,7 +22,6 @@ class ParsedTeamMatchInterpreter:
             ret = []
             for heat in heats:
                 dct_heat = heat._asdict()
-                dct_heat['finished'] = heat.winner_time is not None
                 (
                     dct_heat['rider_a'],
                     dct_heat['rider_b'],

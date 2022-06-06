@@ -8,9 +8,18 @@ from speedway_data_parser.parsers.speedway_ekstraliga_parser import \
 from speedway_data_parser.types import Heat, HeatRider, TeamCompositionRider
 
 
+def pytest_generate_tests(metafunc):
+    if "test_html_match" in metafunc.fixturenames:
+        metafunc.parametrize(
+            "test_html_match",
+            ["speedway_ekstraliga_match_new.html", "speedway_ekstraliga_match_stopped.html"],
+            indirect=True
+        )
+
+
 @pytest.fixture(scope="module")
-def test_html_match():
-    with open("tests/dane_testowe/speedway_ekstraliga_match.html", "r") as f:
+def test_html_match(request):
+    with open("tests/dane_testowe/{}".format(request.param), "r") as f:
         html = f.read()
     tmp = TeamMatchParser()
     tmp.parse(html)
@@ -19,7 +28,7 @@ def test_html_match():
 
 class TestMatchParser:
     def test_get_stadium(self, test_html_match):
-        assert test_html_match.get_stadium() == "Stadion im. Edwarda Jancarza"
+        assert test_html_match.get_stadium() == "Stadion im. Edwarda Jancarza - Gorzów"
 
     def test_get_round(self, test_html_match):
         assert test_html_match.get_round() == 16

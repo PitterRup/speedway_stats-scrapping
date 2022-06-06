@@ -14,54 +14,54 @@ class TeamMatchParser:
         self.tree = html.fromstring(html_string)
 
     def get_stadium(self):
-        elem = self.tree.find_class("match__header__info")[0].getchildren()[0]
+        elem = self.tree.find_class("match-info-box__segment")[2].getchildren()[0]
         return elem.text.strip()
 
     def get_round(self):
-        elem = self.tree.find_class("match__header__info")[0].getchildren()[1]
+        elem = self.tree.find_class("match-info-box__segment")[1].getchildren()[2]
         return int(elem.text.strip().replace(" Runda", ""))
 
     def get_match_datetime(self):
-        str_date = self.tree.find_class("match__header__datetime")[0].text.strip()
+        str_date = self.tree.find_class("match-info-box__segment")[1].getchildren()[3].text.strip()
         return datetime.strptime(str_date, "%d.%m.%Y, %H:%M")
 
     def get_referee(self):
-        elem = self.tree.find_class("match__header__members")[0].getchildren()[0]
-        return elem.text_content().strip().replace("Sędzia\n", "")
+        elem = self.tree.find_class("match-info-box__members")[0].getchildren()[0]
+        return elem.text_content().strip().replace("Sędzia\n", "").strip()
 
     def get_track_commissioner(self):
-        elem = self.tree.find_class("match__header__members")[0].getchildren()[1]
-        return elem.text_content().strip().replace("Komisarz toru\n", "")
+        elem = self.tree.find_class("match-info-box__members")[0].getchildren()[1]
+        return elem.text_content().strip().replace("Komisarz toru\n", "").strip()
 
     def get_first_team_name(self):
-        return self.tree.find_class("match__header__points__col__header")[0].text.strip()
+        return self.tree.find_class("match-score-box__header__inner")[0].text.strip()
 
     def get_first_team_score(self):
-        return int(self.tree.find_class("match__header__points__col__header__score")[0].text.strip())
+        return int(self.tree.find_class("match-score-box__score__match-points")[0].text.strip())
 
     def get_second_team_name(self):
-        return self.tree.find_class("match__header__points__col__header")[1].text.strip()
+        return self.tree.find_class("match-score-box__header__inner")[1].text.strip()
 
     def get_second_team_score(self):
-        return int(self.tree.find_class("match__header__points__col__header__score")[1].text.strip())
+        return int(self.tree.find_class("match-score-box__score__match-points")[1].text.strip())
 
     def get_first_team_composition(self):
-        table = self.tree.find_class("match__header__points__col")[0].xpath("table")[0]
+        table = self.tree.find_class("match-score-box")[0].xpath("table")[0]
         return self._get_team_composition(table)
 
     def get_second_team_composition(self):
-        table = self.tree.find_class("match__header__points__col")[1].xpath("table")[0]
+        table = self.tree.find_class("match-score-box")[1].xpath("table")[0]
         return self._get_team_composition(table)
 
     def _get_team_composition(self, elem_table):
         ret = []
-        for row in elem_table.xpath("tr"):
-            name = row.find_class("match__header__points__rider")[0].text_content().strip()
+        for row in elem_table.xpath("tbody/tr"):
+            name = row.find_class("match-score-box__rider")[0].text_content().strip()
             if not name:
                 continue
             ret.append(
                 TeamCompositionRider(
-                    number=int(row.find_class("match__header__points__no")[0].text.strip()),
+                    number=int(row.getchildren()[0].text.strip().replace('.', '')),
                     name=name,
                 )
             )
@@ -71,11 +71,14 @@ class TeamMatchParser:
         ret = []
         for elem_heat in self.tree.find_class("match__heat"):
             header = elem_heat.getchildren()[0].text.strip()
-            riders = self._get_heat_riders(elem_heat.xpath("table")[0].xpath("tr"))
+            elem_riders = elem_heat.xpath("table")[0].xpath("tr")
+            is_finished = bool(elem_riders[0].getchildren()[4].text.strip())
+            riders = self._get_heat_riders(elem_riders)
             ret.append(
                 Heat(
                     number=self._get_heat_number(header),
                     winner_time=self._get_heat_winner_timer(header),
+                    finished=is_finished,
                     rider_a=riders[0],
                     rider_b=riders[1],
                     rider_c=riders[2],
@@ -107,8 +110,8 @@ class TeamMatchParser:
                 name = lst_name[0].text.strip()
                 replaced_name = None
             score_str = upper(strip(rider.getchildren()[3].text))
-            if score_str not in ("D", "U", "W", "M", "T", "-", "0", "1", "2", "3", None):
-                raise Exception("Nieznana wartość w polu wynik: {}".format(score_str))
+            if score_str not in ("D", "U", "u", "W", "M", "T", "-", "0", "1", "2", "3", None, '', '4', '6'):
+                raise Exception("Nieznana wartość w polu wynik: {0!r}".format(score_str))
             ret.append(
                 HeatRider(
                     warning=strip(rider.getchildren()[1].text_content()) == "!",

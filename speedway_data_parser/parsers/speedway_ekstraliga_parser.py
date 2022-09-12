@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime
 
@@ -7,6 +8,8 @@ from speedway_data_parser.global_consts import DctHelmetColor
 from speedway_data_parser.string_tools import int_or_none, strip, upper
 from speedway_data_parser.types import (Heat, HeatRider, TeamCompositionRider,
                                         TeamRider)
+
+log = logging.getLogger(__name__)
 
 
 class TeamMatchParser:
@@ -171,3 +174,19 @@ class TeamParser():
                 ].text_content().strip().replace('Narodowość: ', ''),
             ))
         return riders
+
+
+class SeasonMatchesParser:
+    def __init__(self):
+        pass
+
+    def parse(self, html_string):
+        self.tree = html.fromstring(html_string)
+
+    def get_match_links(self):
+        links = []
+        for el in self.tree.find_class('schedule-events__item__inner'):
+            link = el.get('href')
+            if 'mecz' in link:
+                links.append(link)
+        return links

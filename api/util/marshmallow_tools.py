@@ -38,3 +38,11 @@ def opt_url():
 
 def req_url():
     return fields.String(required=True, validate=validate_url)
+
+
+def req_int():
+    return fields.Integer(required=True)
+
+
+def opt_int():
+    return fields.Integer()

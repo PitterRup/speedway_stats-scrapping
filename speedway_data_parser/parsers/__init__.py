@@ -36,3 +36,17 @@ class TeamParserBuilder():
             raise ValueError(u'Compatible parser not found for url={}'.format(url))
         log.debug(u'Parser {} was created'.format(parser_cls))
         return parser_cls(year=int(url_obj.query.replace('y=', '')))
+
+
+class SeasonMatchesParserBuilder:
+    dct_parser_by_name = {
+        'ekstraliga': speedway_ekstraliga_parser.SeasonMatchesParser,
+    }
+
+    @classmethod
+    def by_name(cls, name):
+        parser_cls = cls.dct_parser_by_name.get(name)
+        if not parser_cls:
+            raise ValueError(u'Compatible parser not found for name={}'.format(name))
+        log.debug(u'Parser {} was created'.format(parser_cls))
+        return parser_cls()
